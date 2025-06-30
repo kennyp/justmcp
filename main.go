@@ -15,6 +15,7 @@ import (
 func main() {
 	cmd := &cli.Command{
 		Name:    "justmcp",
+		Usage:   "An MCP Server for Just",
 		Version: server.Version,
 		Flags: []cli.Flag{
 			&cli.BoolWithInverseFlag{
