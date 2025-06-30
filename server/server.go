@@ -12,7 +12,7 @@ import (
 
 const (
 	Name    = "Just Commands"
-	Version = "0.0.1"
+	Version = "0.0.2"
 )
 
 func Start(_ context.Context, cfg *Config) error {

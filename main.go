@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"strings"
 
 	"github.com/urfave/cli/v3"
 	"github.com/yassinebenaid/godump"
@@ -47,10 +48,10 @@ func main() {
 				Sources: cli.EnvVars("JUSTMCP_MINIMAL"),
 			},
 			&cli.StringSliceFlag{
-				Name:    "tools",
-				Aliases: []string{"t"},
-				Usage:   "only allow the given `tools`",
-				Sources: cli.EnvVars("JUSTMCP_TOOLS"),
+				Name:    "recipes",
+				Aliases: []string{"r"},
+				Usage:   "add the given `recipe(s)` as tool(s)",
+				Sources: cli.EnvVars("JUSTMCP_RECIPES"),
 			},
 		},
 		Commands: []*cli.Command{
@@ -73,12 +74,18 @@ func main() {
 				return err
 			}
 
+			allowed := []string{}
+			for _, r := range c.StringSlice("recipes") {
+				rs := strings.Split(r, ",")
+				allowed = append(allowed, rs...)
+			}
+
 			return server.Start(ctx, &server.Config{
-				Justfile:     f,
-				UseMise:      c.Bool("mise"),
-				Chdir:        c.Bool("chdir"),
-				Minimal:      c.Bool("minimal"),
-				AllowedTools: c.StringSlice("tools"),
+				Justfile:       f,
+				UseMise:        c.Bool("mise"),
+				Chdir:          c.Bool("chdir"),
+				Minimal:        c.Bool("minimal"),
+				AllowedRecipes: allowed,
 			})
 		},
 	}

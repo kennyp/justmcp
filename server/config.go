@@ -14,16 +14,16 @@ import (
 )
 
 type Config struct {
-	Justfile     *parser.Justfile
-	UseMise      bool
-	Chdir        bool
-	Minimal      bool
-	AllowedTools []string
+	Justfile       *parser.Justfile
+	UseMise        bool
+	Chdir          bool
+	Minimal        bool
+	AllowedRecipes []string
 }
 
 func (c *Config) Allowed(name string) bool {
-	if slices.Index(c.AllowedTools, name) == -1 {
-		return len(c.AllowedTools) == 0
+	if slices.Index(c.AllowedRecipes, name) == -1 {
+		return len(c.AllowedRecipes) == 0
 	}
 
 	return true
