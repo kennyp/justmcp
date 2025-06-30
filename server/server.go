@@ -5,6 +5,7 @@ import (
 
 	"github.com/mark3labs/mcp-go/server"
 
+	"github.com/kennyp/justmcp/server/tools/enumerated"
 	"github.com/kennyp/justmcp/server/tools/list"
 	"github.com/kennyp/justmcp/server/tools/run"
 )
@@ -21,8 +22,14 @@ func Start(_ context.Context, cfg *Config) error {
 		server.WithInstructions("List available recipes. Always use the run_recipe tool instad of calling just directly. Use just recipes when possible."),
 	)
 
-	list.RegisterTools(srv, cfg)
-	run.RegisterTools(srv, cfg)
+	if cfg.Minimal {
+		list.RegisterTools(srv, cfg)
+		run.RegisterTools(srv, cfg)
+
+		return server.ServeStdio(srv)
+	}
+
+	enumerated.RegisterTools(srv, cfg)
 
 	return server.ServeStdio(srv)
 }

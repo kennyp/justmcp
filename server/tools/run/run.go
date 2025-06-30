@@ -13,17 +13,13 @@ type Registry interface {
 }
 
 type Configurator interface {
-	Exec(ctx context.Context, justfile string, args ...string) (*bytes.Buffer, error)
+	Exec(ctx context.Context, args ...string) (*bytes.Buffer, error)
 }
 
 func RegisterTools(reg Registry, cfg Configurator) {
 	runTool := mcp.NewTool(
 		"run_recipe",
 		mcp.WithDescription("Execute a recipe"),
-		mcp.WithString("justfile",
-			mcp.Description("Full path to the justfile for the project (ex. /home/kennyp/project/justfile)"),
-			mcp.Required(),
-		),
 		mcp.WithString("recipe",
 			mcp.Description("Name of the recipe to execute (ex. build)"),
 			mcp.Required(),
@@ -38,24 +34,19 @@ func RegisterTools(reg Registry, cfg Configurator) {
 }
 
 type executeArgs struct {
-	Justfile string   `json:"justfile"`
-	Recipe   string   `json:"recipe"`
-	Args     []string `json:"arguments"`
+	Recipe string   `json:"recipe"`
+	Args   []string `json:"arguments"`
 }
 
 func newHandler(cfg Configurator) server.ToolHandlerFunc {
 	return mcp.NewTypedToolHandler(func(ctx context.Context, _ mcp.CallToolRequest, args executeArgs) (*mcp.CallToolResult, error) {
-		if args.Justfile == "" {
-			return mcp.NewToolResultError("a justfile path is required"), nil
-		}
-
 		if args.Recipe == "" {
 			return mcp.NewToolResultError("a recipe name is required"), nil
 		}
 
 		allArgs := append([]string{args.Recipe}, args.Args...)
 
-		out, err := cfg.Exec(ctx, args.Justfile, allArgs...)
+		out, err := cfg.Exec(ctx, allArgs...)
 		if err != nil {
 			return mcp.NewToolResultErrorFromErr(out.String(), err), nil
 		}

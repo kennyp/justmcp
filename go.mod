@@ -8,6 +8,7 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
 	github.com/urfave/cli/v3 v3.3.8
+	github.com/yassinebenaid/godump v0.11.1
 )
 
 require (
